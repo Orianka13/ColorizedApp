@@ -39,6 +39,8 @@ class ColorViewController: UIViewController {
         setColor()
         
         colorView.layer.cornerRadius = 10
+        
+        setToolbar()
     }
     
     
@@ -83,6 +85,22 @@ class ColorViewController: UIViewController {
         redLabel.text = String(format: "%.2f", redSlider.value)
         greenLabel.text = String(format: "%.2f", greenSlider.value)
         blueLabel.text = String(format: "%.2f", blueSlider.value)
+    }
+    
+    private func setToolbar() {
+        let toolBar = UIToolbar(frame: CGRect(x: 0.0,
+                                              y: 0.0,
+                                              width: UIScreen.main.bounds.size.width,
+                                              height: 44.0))
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: target, action: #selector(tapDone))
+        toolBar.setItems([flexibleSpace, doneButton], animated: false)
+        redTextField.inputAccessoryView = toolBar
+        greenTextField.inputAccessoryView = toolBar
+        blueTextField.inputAccessoryView = toolBar
+    }
+    @objc func tapDone() {
+        view.endEditing(true)
     }
 }
 
