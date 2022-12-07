@@ -7,11 +7,18 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
 
+
+class MainViewController: UIViewController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
     }
-
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let colorVC = segue.destination as? ColorViewController {
+            colorVC.backgroundColor = view.backgroundColor
+        }
+    }
 }
