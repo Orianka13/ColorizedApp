@@ -20,6 +20,7 @@ class ColorViewController: UIViewController {
     @IBOutlet var blueSlider: UISlider!
     
     var backgroundColor: UIColor!
+    var delegate: ColorViewControllerDelegate!
     
     var red: CGFloat = 0
     var green: CGFloat = 0
@@ -50,6 +51,10 @@ class ColorViewController: UIViewController {
     @IBAction func blueSliderAction() {
         blueLabel.text = String(format: "%.2f", blueSlider.value)
         setColor()
+    }
+    @IBAction func doneButtonPressed() {
+        delegate.setNewBackground(color: backgroundColor)
+        dismiss(animated: true)
     }
     
     private func setColor() {
