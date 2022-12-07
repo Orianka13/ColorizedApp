@@ -43,6 +43,12 @@ class ColorViewController: UIViewController {
         setToolbar()
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            super.touchesBegan(touches, with: event)
+            view.endEditing(true)
+        }
+
+    
     
     @IBAction func redSliderAction() {
         redLabel.text = String(format: "%.2f", redSlider.value)
@@ -99,8 +105,11 @@ class ColorViewController: UIViewController {
         greenTextField.inputAccessoryView = toolBar
         blueTextField.inputAccessoryView = toolBar
     }
-    @objc func tapDone() {
+    
+    @objc private func tapDone() {
         view.endEditing(true)
     }
+    
+    
 }
 
