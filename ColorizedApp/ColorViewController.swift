@@ -19,6 +19,10 @@ class ColorViewController: UIViewController {
     @IBOutlet var greenSlider: UISlider!
     @IBOutlet var blueSlider: UISlider!
     
+    @IBOutlet var redTextField: UITextField!
+    @IBOutlet var greenTextField: UITextField!
+    @IBOutlet var blueTextField: UITextField!
+    
     var backgroundColor: UIColor!
     var delegate: ColorViewControllerDelegate!
     
@@ -40,16 +44,19 @@ class ColorViewController: UIViewController {
     
     @IBAction func redSliderAction() {
         redLabel.text = String(format: "%.2f", redSlider.value)
+        redTextField.text = String(format: "%.2f", redSlider.value)
         setColor()
     }
     
     @IBAction func greenSliderAction() {
         greenLabel.text = String(format: "%.2f", greenSlider.value)
+        greenTextField.text = String(format: "%.2f", greenSlider.value)
         setColor()
     }
     
     @IBAction func blueSliderAction() {
         blueLabel.text = String(format: "%.2f", blueSlider.value)
+        blueTextField.text = String(format: "%.2f", blueSlider.value)
         setColor()
     }
     @IBAction func doneButtonPressed() {
