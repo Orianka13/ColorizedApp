@@ -34,12 +34,14 @@ class ColorViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        redTextField.delegate = self
+        greenTextField.delegate = self
+        blueTextField.delegate = self
+        
         getColor()
-        
         setColor()
-        
         colorView.layer.cornerRadius = 10
-        
         setToolbar()
     }
     
@@ -71,8 +73,12 @@ class ColorViewController: UIViewController {
         delegate.setNewBackground(color: backgroundColor)
         dismiss(animated: true)
     }
+}
+
+//MARK: - Private methods
+private extension ColorViewController {
     
-    private func setColor() {
+    func setColor() {
         backgroundColor = UIColor(red: CGFloat(redSlider.value),
                                   green: CGFloat(greenSlider.value),
                                   blue:  CGFloat(blueSlider.value),
@@ -80,7 +86,7 @@ class ColorViewController: UIViewController {
         colorView.backgroundColor = backgroundColor
     }
     
-    private func getColor() {
+    func getColor() {
         
         backgroundColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         
@@ -91,9 +97,13 @@ class ColorViewController: UIViewController {
         redLabel.text = String(format: "%.2f", redSlider.value)
         greenLabel.text = String(format: "%.2f", greenSlider.value)
         blueLabel.text = String(format: "%.2f", blueSlider.value)
+        
+        redTextField.text = String(format: "%.2f", redSlider.value)
+        greenTextField.text = String(format: "%.2f", greenSlider.value)
+        blueTextField.text = String(format: "%.2f", blueSlider.value)
     }
     
-    private func setToolbar() {
+    func setToolbar() {
         let toolBar = UIToolbar(frame: CGRect(x: 0.0,
                                               y: 0.0,
                                               width: UIScreen.main.bounds.size.width,
@@ -106,10 +116,32 @@ class ColorViewController: UIViewController {
         blueTextField.inputAccessoryView = toolBar
     }
     
-    @objc private func tapDone() {
+    @objc func tapDone() {
         view.endEditing(true)
     }
-    
-    
 }
 
+// MARK: - UITextFieldDelegate
+extension ColorViewController: UITextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        guard let newValue = textField.text else { return }
+        guard let numberValue = Float(newValue) else { return }
+        
+        if textField == redTextField {
+            redSlider.value = numberValue
+            redLabel.text = String(format: "%.2f", numberValue)
+            setColor()
+            
+        } else if textField == greenTextField {
+            greenSlider.value = numberValue
+            greenLabel.text = String(format: "%.2f", numberValue)
+            setColor()
+            
+        } else {
+            blueSlider.value = numberValue
+            blueLabel.text = String(format: "%.2f", numberValue)
+            setColor()
+        }
+    }
+}
