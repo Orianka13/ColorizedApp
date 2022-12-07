@@ -41,15 +41,15 @@ class ColorViewController: UIViewController {
         
         getColor()
         setColor()
-        colorView.layer.cornerRadius = 10
         setToolbar()
+        
+        colorView.layer.cornerRadius = 10
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-            super.touchesBegan(touches, with: event)
-            view.endEditing(true)
-        }
-
+        super.touchesBegan(touches, with: event)
+        view.endEditing(true)
+    }
     
     
     @IBAction func redSliderAction() {
@@ -111,6 +111,7 @@ private extension ColorViewController {
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: target, action: #selector(tapDone))
         toolBar.setItems([flexibleSpace, doneButton], animated: false)
+        
         redTextField.inputAccessoryView = toolBar
         greenTextField.inputAccessoryView = toolBar
         blueTextField.inputAccessoryView = toolBar
