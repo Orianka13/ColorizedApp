@@ -82,7 +82,7 @@ private extension ColorViewController {
     
     func getColor() {
         let ciColor = CIColor(color: backgroundColor)
-
+        
         setSliders(with: ciColor)
         setLabels(with: ciColor)
         setTextFields(with: ciColor)
@@ -135,7 +135,14 @@ private extension ColorViewController {
         setColor()
     }
     
- 
+    func showAlert() {
+        let alert = UIAlertController(title: "Error",
+                                      message: "Enter correct value",
+                                      preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
 }
 
 // MARK: - UITextFieldDelegate
@@ -144,7 +151,8 @@ extension ColorViewController: UITextFieldDelegate {
         
         guard let newValue = textField.text else { return }
         guard let numberValue = Float(newValue) else {
-           
+            showAlert()
+            getColor()
             return }
         
         if textField == redTextField {
