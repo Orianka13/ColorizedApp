@@ -26,12 +26,6 @@ class ColorViewController: UIViewController {
     var backgroundColor: UIColor!
     var delegate: ColorViewControllerDelegate!
     
-    var red: CGFloat = 0
-    var green: CGFloat = 0
-    var blue: CGFloat = 0
-    var alpha: CGFloat = 0
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -87,20 +81,29 @@ private extension ColorViewController {
     }
     
     func getColor() {
-        
-        backgroundColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        
-        redSlider.value = Float(red)
-        greenSlider.value = Float(green)
-        blueSlider.value = Float(blue)
-        
-        redLabel.text = String(format: "%.2f", redSlider.value)
-        greenLabel.text = String(format: "%.2f", greenSlider.value)
-        blueLabel.text = String(format: "%.2f", blueSlider.value)
-        
-        redTextField.text = String(format: "%.2f", redSlider.value)
-        greenTextField.text = String(format: "%.2f", greenSlider.value)
-        blueTextField.text = String(format: "%.2f", blueSlider.value)
+        let ciColor = CIColor(color: backgroundColor)
+
+        setSliders(with: ciColor)
+        setLabels(with: ciColor)
+        setTextFields(with: ciColor)
+    }
+    
+    func setSliders(with color: CIColor) {
+        redSlider.value = Float(color.red)
+        greenSlider.value = Float(color.green)
+        blueSlider.value = Float(color.blue)
+    }
+    
+    func setLabels(with color: CIColor) {
+        redLabel.text = String(format: "%.2f", Float(color.red))
+        greenLabel.text = String(format: "%.2f", Float(color.green))
+        blueLabel.text = String(format: "%.2f", Float(color.blue))
+    }
+    
+    func setTextFields(with color: CIColor) {
+        redTextField.text = String(format: "%.2f", Float(color.red))
+        greenTextField.text = String(format: "%.2f", Float(color.green))
+        blueTextField.text = String(format: "%.2f", Float(color.blue))
     }
     
     func setToolbar() {
@@ -108,8 +111,13 @@ private extension ColorViewController {
                                               y: 0.0,
                                               width: UIScreen.main.bounds.size.width,
                                               height: 44.0))
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: target, action: #selector(tapDone))
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                                            target: nil,
+                                            action: nil)
+        let doneButton = UIBarButtonItem(title: "Done",
+                                         style: .plain,
+                                         target: target,
+                                         action: #selector(tapDone))
         toolBar.setItems([flexibleSpace, doneButton], animated: false)
         
         redTextField.inputAccessoryView = toolBar
@@ -120,6 +128,14 @@ private extension ColorViewController {
     @objc func tapDone() {
         view.endEditing(true)
     }
+    
+    func setParametersByTextField(numberValue: Float, slider: UISlider, label: UILabel) {
+        slider.value = numberValue
+        label.text = String(format: "%.2f", numberValue)
+        setColor()
+    }
+    
+ 
 }
 
 // MARK: - UITextFieldDelegate
@@ -127,22 +143,16 @@ extension ColorViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         guard let newValue = textField.text else { return }
-        guard let numberValue = Float(newValue) else { return }
+        guard let numberValue = Float(newValue) else {
+           
+            return }
         
         if textField == redTextField {
-            redSlider.value = numberValue
-            redLabel.text = String(format: "%.2f", numberValue)
-            setColor()
-            
+            setParametersByTextField(numberValue: numberValue, slider: redSlider, label: redLabel)
         } else if textField == greenTextField {
-            greenSlider.value = numberValue
-            greenLabel.text = String(format: "%.2f", numberValue)
-            setColor()
-            
+            setParametersByTextField(numberValue: numberValue, slider: greenSlider, label: greenLabel)
         } else {
-            blueSlider.value = numberValue
-            blueLabel.text = String(format: "%.2f", numberValue)
-            setColor()
+            setParametersByTextField(numberValue: numberValue, slider: blueSlider, label: blueLabel)
         }
     }
 }
