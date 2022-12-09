@@ -35,7 +35,6 @@ class ColorViewController: UIViewController {
         
         getColor()
         setColor()
-        setToolbar()
         
         colorView.layer.cornerRadius = 10
     }
@@ -47,20 +46,20 @@ class ColorViewController: UIViewController {
     
     
     @IBAction func redSliderAction() {
-        redLabel.text = String(format: "%.2f", redSlider.value)
-        redTextField.text = String(format: "%.2f", redSlider.value)
+        setValue(for: redLabel)
+        setValue(for: redTextField)
         setColor()
     }
     
     @IBAction func greenSliderAction() {
-        greenLabel.text = String(format: "%.2f", greenSlider.value)
-        greenTextField.text = String(format: "%.2f", greenSlider.value)
+        setValue(for: greenLabel)
+        setValue(for: greenTextField)
         setColor()
     }
     
     @IBAction func blueSliderAction() {
-        blueLabel.text = String(format: "%.2f", blueSlider.value)
-        blueTextField.text = String(format: "%.2f", blueSlider.value)
+        setValue(for: blueLabel)
+        setValue(for: blueTextField)
         setColor()
     }
     @IBAction func doneButtonPressed() {
@@ -84,45 +83,35 @@ private extension ColorViewController {
         let ciColor = CIColor(color: backgroundColor)
         
         setSliders(with: ciColor)
-        setLabels(with: ciColor)
-        setTextFields(with: ciColor)
+        
+        setValue(for: redLabel, greenLabel, blueLabel)
+        setValue(for: redTextField, greenTextField, blueTextField)
     }
     
     func setSliders(with color: CIColor) {
-        redSlider.value = Float(color.red)
-        greenSlider.value = Float(color.green)
-        blueSlider.value = Float(color.blue)
+        redSlider.setValue(Float(color.red), animated: true)
+        greenSlider.setValue(Float(color.green), animated: true)
+        blueSlider.setValue(Float(color.blue), animated: true)
     }
     
-    func setLabels(with color: CIColor) {
-        redLabel.text = String(format: "%.2f", Float(color.red))
-        greenLabel.text = String(format: "%.2f", Float(color.green))
-        blueLabel.text = String(format: "%.2f", Float(color.blue))
+    func setValue(for labels: UILabel...) {
+        labels.forEach { label in
+            switch label {
+            case redLabel: label.text = String(format: "%.2f", redSlider.value)
+            case greenLabel: label.text = String(format: "%.2f", greenSlider.value)
+            default: label.text = String(format: "%.2f", blueSlider.value)
+            }
+        }
     }
     
-    func setTextFields(with color: CIColor) {
-        redTextField.text = String(format: "%.2f", Float(color.red))
-        greenTextField.text = String(format: "%.2f", Float(color.green))
-        blueTextField.text = String(format: "%.2f", Float(color.blue))
-    }
-    
-    func setToolbar() {
-        let toolBar = UIToolbar(frame: CGRect(x: 0.0,
-                                              y: 0.0,
-                                              width: UIScreen.main.bounds.size.width,
-                                              height: 44.0))
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-                                            target: nil,
-                                            action: nil)
-        let doneButton = UIBarButtonItem(title: "Done",
-                                         style: .plain,
-                                         target: target,
-                                         action: #selector(tapDone))
-        toolBar.setItems([flexibleSpace, doneButton], animated: false)
-        
-        redTextField.inputAccessoryView = toolBar
-        greenTextField.inputAccessoryView = toolBar
-        blueTextField.inputAccessoryView = toolBar
+    func setValue(for textFields: UITextField...) {
+        textFields.forEach { textField in
+            switch textField {
+            case redTextField: textField.text = String(format: "%.2f", redSlider.value)
+            case greenTextField: textField.text = String(format: "%.2f", greenSlider.value)
+            default: textField.text = String(format: "%.2f", blueSlider.value)
+            }
+        }
     }
     
     @objc func tapDone() {
@@ -130,8 +119,8 @@ private extension ColorViewController {
     }
     
     func setParametersByTextField(numberValue: Float, slider: UISlider, label: UILabel) {
-        slider.value = numberValue
-        label.text = String(format: "%.2f", numberValue)
+        slider.setValue(numberValue, animated: true)
+        setValue(for: label)
         setColor()
     }
     
@@ -150,10 +139,11 @@ extension ColorViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         guard let newValue = textField.text else { return }
-        guard let numberValue = Float(newValue) else {
+        guard let numberValue = Float(newValue), numberValue <= 1, numberValue >= 0 else {
             showAlert()
             getColor()
-            return }
+            return
+        }
         
         if textField == redTextField {
             setParametersByTextField(numberValue: numberValue, slider: redSlider, label: redLabel)
@@ -162,5 +152,21 @@ extension ColorViewController: UITextFieldDelegate {
         } else {
             setParametersByTextField(numberValue: numberValue, slider: blueSlider, label: blueLabel)
         }
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        let toolBar = UIToolbar()
+        toolBar.sizeToFit()
+        textField.inputAccessoryView = toolBar
+        
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                                            target: nil,
+                                            action: nil)
+        let doneButton = UIBarButtonItem(title: "Done",
+                                         style: .done,
+                                         target: target,
+                                         action: #selector(tapDone))
+        
+        toolBar.setItems([flexibleSpace, doneButton], animated: false)
     }
 }
